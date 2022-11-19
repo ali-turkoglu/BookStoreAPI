@@ -6,8 +6,12 @@ import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import static io.restassured.RestAssured.*;
 
@@ -16,6 +20,9 @@ public class CreateUserSteps {
     Response response;
     String requestUserName;
     String requestPassword;
+    String responseUserID;
+    File outFile;
+    PrintWriter output;
 
     @When("User sends a POST request to create user end point")
     public void user_sends_a_POST_request_to_create_user_end_point() {
@@ -39,11 +46,25 @@ public class CreateUserSteps {
     }
 
     @When("User captures status code userID username info")
-    public void user_captures_status_code_userID_username_info() {
+    public void user_captures_status_code_userID_username_info() throws FileNotFoundException {
+        //We are de-serialize response object to get UserID
+        Map<Object,Object> responseMap= response.as(Map.class);
+        responseUserID=(String) responseMap.get("userID");
+        System.out.println("responseUserID = " + responseUserID);
+        outFile=new File("C:\\Users\\alitu\\IdeaProjects\\BookStoreAPI\\src\\test\\resources\\usersID.out");
+        if(outFile.exists()){
+            outFile.delete();
+        }
+        output=new PrintWriter(outFile);
+        output.println((responseUserID));
+        output.close(); // this step crucial to actually finalize writing function
 
     }
     @Then("Verifies status code username and userID is NOT null")
-    public void verifies_status_code_username_and_userID_is_NOT_null() {
-
+    public void verifies_status_code_username_and_userID_is_NOT_null() throws FileNotFoundException {
+        // Read the file for userID
+        outFile=new File("C:\\Users\\alitu\\IdeaProjects\\BookStoreAPI\\src\\test\\resources\\usersID.out");
+        Scanner scan=new Scanner(outFile);
+        String userID=scan.next();
     }
 }
