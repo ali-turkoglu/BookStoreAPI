@@ -39,6 +39,8 @@ public class CreateUserSteps {
         //endpoint of the request
         baseURI= ConfigurationReader.get("baseUrl");
         basePath=ConfigurationReader.get("apiUser");
+
+        // Below is our creating request to API
         response=given().accept(ContentType.JSON)
                         .and().contentType(ContentType.JSON)
                         .and().body(requestBody)
@@ -55,6 +57,8 @@ public class CreateUserSteps {
         if(outFile.exists()){
             outFile.delete();
         }
+        // writing userID to a regular resources file
+        // defining a file: we need to provide absolute path of the file
         output=new PrintWriter(outFile);
         output.println((responseUserID));
         output.close(); // this step crucial to actually finalize writing function
